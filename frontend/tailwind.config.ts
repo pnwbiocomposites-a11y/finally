@@ -31,10 +31,15 @@ const config: Config = {
           '0%': { backgroundColor: 'rgba(242, 100, 120, 0.35)' },
           '100%': { backgroundColor: 'transparent' }
         },
+        'slide-in': {
+          '0%': { opacity: '0', transform: 'translateX(1rem)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
       },
       animation: {
         pulseUp: 'pulseUp 0.5s ease-out',
         pulseDown: 'pulseDown 0.5s ease-out',
+        'slide-in': 'slide-in 0.2s ease-out',
       },
     },
   },

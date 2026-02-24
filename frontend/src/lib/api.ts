@@ -33,7 +33,12 @@ const request = async <T>(input: string, init?: RequestInit): Promise<T> => {
   });
 
   if (!response.ok) {
-    throw new Error(`${response.status} ${response.statusText}`);
+    let detail = response.statusText;
+    try {
+      const body = await response.json();
+      if (body?.detail) detail = body.detail;
+    } catch { /* ignore parse errors */ }
+    throw new Error(detail);
   }
 
   if (response.status === 204) {

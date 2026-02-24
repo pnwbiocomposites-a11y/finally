@@ -88,5 +88,6 @@ export interface ChatMessage {
   actions?: {
     trades?: ChatTrade[];
     watchlist_changes?: ChatWatchlistChange[];
+    errors?: string[];
   };
 }

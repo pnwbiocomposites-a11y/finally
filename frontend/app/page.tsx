@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { ChatPanel } from '@/src/components/ChatPanel';
 import { Header } from '@/src/components/Header';
@@ -8,9 +8,11 @@ import { Heatmap } from '@/src/components/Heatmap';
 import { MainChart } from '@/src/components/MainChart';
 import { PnlChart } from '@/src/components/PnlChart';
 import { PositionsTable } from '@/src/components/PositionsTable';
+import { ToastContainer } from '@/src/components/ToastContainer';
 import { TradeBar } from '@/src/components/TradeBar';
 import { WatchlistPanel } from '@/src/components/WatchlistPanel';
 import { useMarketStream } from '@/src/hooks/useMarketStream';
+import { useToast } from '@/src/hooks/useToast';
 import { useTradingData } from '@/src/hooks/useTradingData';
 
 export default function HomePage() {
@@ -33,6 +35,29 @@ export default function HomePage() {
   } = useTradingData();
 
   const streamState = useMarketStream({ onPriceBatch });
+  const { toasts, show: showToast, dismiss: dismissToast } = useToast();
+
+  const safeTrade = useCallback(
+    async (payload: { ticker: string; quantity: number; side: 'buy' | 'sell' }) => {
+      try {
+        await trade(payload);
+      } catch (err) {
+        showToast(`Trade failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
+    },
+    [trade, showToast],
+  );
+
+  const safeAddTicker = useCallback(
+    async (ticker: string) => {
+      try {
+        await addTicker(ticker);
+      } catch (err) {
+        showToast(`Watchlist error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
+    },
+    [addTicker, showToast],
+  );
 
   useEffect(() => {
     setConnectionState(streamState);
@@ -74,11 +99,12 @@ export default function HomePage() {
           />
           <TradeBar
             defaultTicker={selectedTicker}
-            onTrade={trade}
-            onAddTicker={addTicker}
+            onTrade={safeTrade}
+            onAddTicker={safeAddTicker}
           />
         </div>
       </div>
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </main>
   );
 }

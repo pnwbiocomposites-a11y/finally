@@ -44,6 +44,11 @@ export const ChatPanel = ({ messages, loading, onSubmit }: ChatPanelProps) => {
                   Watchlist: {entry.actions.watchlist_changes.map((change) => `${change.action} ${change.ticker}`).join(' · ')}
                 </p>
               ) : null}
+              {entry.actions?.errors?.length ? (
+                <p className="mt-1 text-xs text-red-400">
+                  Failed: {entry.actions.errors.join(' · ')}
+                </p>
+              ) : null}
             </article>
           ))}
           {loading && <p className="text-xs uppercase tracking-wide text-terminal-accent">Analyzing...</p>}

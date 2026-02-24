@@ -239,6 +239,7 @@ export const useTradingData = () => {
           actions: {
             trades: response.actions?.trades,
             watchlist_changes: response.actions?.watchlist_changes,
+            errors: response.actions?.errors,
           },
         };
         setChatMessages((current) => [...current, assistantMessage]);
